@@ -108,8 +108,7 @@ void draw() {
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
   if (frameRate > 10) {
-    polygons.add(new CustomShape(kinectWidth/2, -50, -1));
-    polygons.add(new CustomShape(kinectWidth/2, -50, random(2.5, 20)));
+    polygons.add(new CustomShape(kinectWidth/2, -50, 10.0));
   }
   // take one step in the box2d physics world
   box2d.step();

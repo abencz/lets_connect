@@ -29,35 +29,20 @@ class CustomShape {
     body.setLinearVelocity(new Vec2(random(-8, 8), random(2, 8)));
     body.setAngularVelocity(random(-5, 5));
     
-    // depending on the r this combi-code creates either a box2d polygon or a circle
-    if (r == -1) {
-      // box2d polygon shape
-      PolygonShape sd = new PolygonShape();
-      // toxiclibs polygon creator (triangle, square, etc)
-      toxiPoly = new Circle(random(5, 20)).toPolygon2D(int(random(3, 6)));
-      // place the toxiclibs polygon's vertices into a vec2d array
-      Vec2[] vertices = new Vec2[toxiPoly.getNumPoints()];
-      for (int i=0; i<vertices.length; i++) {
-        Vec2D v = toxiPoly.vertices.get(i);
-        vertices[i] = box2d.vectorPixelsToWorld(new Vec2(v.x, v.y));
-      }
-      // put the vertices into the box2d shape
-      sd.set(vertices, vertices.length);
-      // create the fixture from the shape (deflect things based on the actual polygon shape)
-      body.createFixture(sd, 1);
-    } else {
-      // box2d circle shape of radius r
-      CircleShape cs = new CircleShape();
-      cs.m_radius = box2d.scalarPixelsToWorld(r);
-      // tweak the circle's fixture def a little bit
-      FixtureDef fd = new FixtureDef();
-      fd.shape = cs;
-      fd.density = 1;
-      fd.friction = 0.01;
-      fd.restitution = 0.3;
-      // create the fixture from the shape's fixture def (deflect things based on the actual circle shape)
-      body.createFixture(fd);
+    // box2d polygon shape
+    PolygonShape sd = new PolygonShape();
+    // toxiclibs polygon creator (triangle, square, etc)
+    toxiPoly = new Circle(r).toPolygon2D(4);
+    // place the toxiclibs polygon's vertices into a vec2d array
+    Vec2[] vertices = new Vec2[toxiPoly.getNumPoints()];
+    for (int i=0; i<vertices.length; i++) {
+      Vec2D v = toxiPoly.vertices.get(i);
+      vertices[i] = box2d.vectorPixelsToWorld(new Vec2(v.x, v.y));
     }
+    // put the vertices into the box2d shape
+    sd.set(vertices, vertices.length);
+    // create the fixture from the shape (deflect things based on the actual polygon shape)
+    body.createFixture(sd, 1);
   }
  
   // method to loosely move shapes outside a person's polygon
@@ -100,15 +85,12 @@ class CustomShape {
     noStroke();
     // use the shape's custom color
     fill(col);
-    // depending on the r this combi-code displays either a polygon or a circle
-    if (r == -1) {
+
       // rotate by the body's angle
       float a = body.getAngle();
       rotate(-a); // minus!
       gfx.polygon2D(toxiPoly);
-    } else {
-      ellipse(0, 0, r*2, r*2);
-    }
+
     popMatrix();
   }
  
