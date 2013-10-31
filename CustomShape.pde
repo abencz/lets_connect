@@ -1,6 +1,9 @@
 // usually one would probably make a generic Shape class and subclass different types (circle, polygon), but that
 // would mean at least 3 instead of 1 class, so for this tutorial it's a combi-class CustomShape for all types of shapes
 // to save some space and keep the code as concise as possible I took a few shortcuts to prevent repeating the same code
+import java.util.List;
+import java.util.Arrays;
+
 class CustomShape {
   // to hold the box2d body
   Body body;
@@ -32,7 +35,12 @@ class CustomShape {
     // box2d polygon shape
     PolygonShape sd = new PolygonShape();
     // toxiclibs polygon creator (triangle, square, etc)
-    toxiPoly = new Circle(r).toPolygon2D(4);
+    //toxiPoly = new Ellipse(r, 1.5*r).toPolygon2D(4);
+    toxiPoly = new Polygon2D(Arrays.asList(new Vec2D(-r,r*1.5), 
+                                           new Vec2D(r,r*1.5), 
+                                           new Vec2D(r,-r*1.5), 
+                                           new Vec2D(-r,-r*1.5)));
+                                           
     // place the toxiclibs polygon's vertices into a vec2d array
     Vec2[] vertices = new Vec2[toxiPoly.getNumPoints()];
     for (int i=0; i<vertices.length; i++) {
