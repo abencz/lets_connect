@@ -23,7 +23,8 @@ ToxiclibsSupport gfx;
 PolygonBlob poly;
  
 // PImage to hold incoming imagery and smaller one for blob detection
-PImage cam, blobs;
+PImage cam = createImage(640, 480, RGB); 
+PImage blobs;
 // the kinect's dimensions to be used later on for calculations
 int kinectWidth = 640;
 int kinectHeight = 480;
@@ -47,7 +48,8 @@ ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
  
 void setup() {
   // it's possible to customize this, for example 1920x1080
-  size(1280, 720, OPENGL);
+  //size(1280, 720, OPENGL);
+  size(640, 480, OPENGL);
   context = new SimpleOpenNI(this);
   // initialize SimpleOpenNI object
   if (!context.enableDepth() || !context.enableUser()) { 
@@ -67,7 +69,7 @@ void setup() {
     blobs = createImage(kinectWidth/3, kinectHeight/3, RGB);
     // initialize blob detection object to the blob image dimensions
     theBlobDetection = new BlobDetection(blobs.width, blobs.height);
-    theBlobDetection.setThreshold(0.2);
+    theBlobDetection.setThreshold(0.3);
     // initialize ToxiclibsSupport object
     gfx = new ToxiclibsSupport(this);
     // setup box2d, create world, set gravity
@@ -83,8 +85,22 @@ void draw() {
   background(bgColor);
   // update the SimpleOpenNI object
   context.update();
-  // put the image into a PImage
-  cam = context.userImage().get();
+
+  cam = context.userImage();
+  cam.loadPixels();
+  color black = color(0,0,0);
+  // filter out grey pixels (mixed in depth image)
+  for (int i=0; i<cam.pixels.length; i++)
+  { 
+    color pix = cam.pixels[i];
+    int blue = pix & 0xff;
+    if (blue == ((pix >> 8) & 0xff) && blue == ((pix >> 16) & 0xff))
+    {
+      cam.pixels[i] = black;
+    }
+  }
+  cam.updatePixels();
+  
   // copy the image into the smaller blob image
   blobs.copy(cam, 0, 0, cam.width, cam.height, 0, 0, blobs.width, blobs.height);
   // blur the blob image
