@@ -14,19 +14,19 @@ class CustomShape {
   // radius (also used to distinguish between circles and polygons in this combi-class
   float r;
  
-  CustomShape(float x, float y, float r) {
+  CustomShape(float x, float y, float r, BodyType type) {
     this.r = r;
     // create a body (polygon or circle based on the r)
-    makeBody(x, y);
+    makeBody(x, y, type);
     // get a random color
     col = getRandomColor();
   }
  
-  void makeBody(float x, float y) {
+  void makeBody(float x, float y, BodyType type) {
     // define a dynamic body positioned at xy in box2d world coordinates,
     // create it and set the initial values for this box2d body's speed and angle
     BodyDef bd = new BodyDef();
-    bd.type = BodyType.DYNAMIC;
+    bd.type = type;
     bd.position.set(box2d.coordPixelsToWorld(new Vec2(x, y)));
     body = box2d.createBody(bd);
     body.setLinearVelocity(new Vec2(random(-8, 8), random(2, 8)));

@@ -10,6 +10,7 @@ import toxi.geom.*; // toxiclibs shapes and vectors
 import toxi.processing.*; // toxiclibs display
 import pbox2d.*; // shiffman's jbox2d helper library
 import org.jbox2d.collision.shapes.*; // jbox2d
+import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.common.*; // jbox2d
 import org.jbox2d.dynamics.*; // jbox2d
  
@@ -23,11 +24,12 @@ ToxiclibsSupport gfx;
 PolygonBlob poly;
  
 // PImage to hold incoming imagery and smaller one for blob detection
-PImage cam = createImage(640, 480, RGB); 
 PImage blobs;
 // the kinect's dimensions to be used later on for calculations
 int kinectWidth = 640;
 int kinectHeight = 480;
+PImage cam = createImage(640, 480, RGB);
+
 // to center and rescale from 640x480 to higher custom resolutions
 float reScale;
  
@@ -48,8 +50,8 @@ ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
  
 void setup() {
   // it's possible to customize this, for example 1920x1080
-  //size(1280, 720, OPENGL);
-  size(640, 480, OPENGL);
+  size(1280, 720, OPENGL);
+//  size(640, 480, OPENGL);
   context = new SimpleOpenNI(this);
   // initialize SimpleOpenNI object
   if (!context.enableDepth() || !context.enableUser()) { 
@@ -75,9 +77,41 @@ void setup() {
     // setup box2d, create world, set gravity
     box2d = new PBox2D(this);
     box2d.createWorld();
-    box2d.setGravity(0, -20);
+    box2d.setGravity(0, -40);
     // set random colors (background, blob)
     setRandomColors(1);
+    
+    float gap = kinectWidth / 11;
+    for (int i=0; i<10; i++)
+    {
+      drawString(gap * (i+1), 7.5, 10);
+    }
+  }
+}
+
+void drawString(float x, float size, int cards) {
+  
+  float gap = kinectHeight/cards;
+  CustomShape s1 = new CustomShape(x, -40, size, BodyType.STATIC);
+  polygons.add(s1);
+  
+  CustomShape last_shape = s1;
+  CustomShape next_shape;
+  for (int i=0; i<cards; i++)
+  {
+    float y = -20 + gap * (i+1);
+    next_shape = new CustomShape(x, -20 + gap * (i+1), size, BodyType.DYNAMIC);
+    DistanceJointDef jd = new DistanceJointDef();
+
+    Vec2 c1 = last_shape.body.getWorldCenter();
+    Vec2 c2 = next_shape.body.getWorldCenter();
+    c1.y = c1.y + 2.5;
+    c2.y = c2.y - 2.5;
+    jd.initialize(last_shape.body, next_shape.body, c1, c2);
+    jd.length = box2d.scalarPixelsToWorld(gap - 15);
+    box2d.createJoint(jd);
+    polygons.add(next_shape);
+    last_shape = next_shape;
   }
 }
  
@@ -123,8 +157,11 @@ void draw() {
  
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
+
+  
   if (frameRate > 10) {
-    polygons.add(new CustomShape(kinectWidth/2, -50, 10.0));
+    //CustomShape shape = new CustomShape(kinectWidth/2, -50, 10.0);
+    //polygons.add(shape);
   }
   // take one step in the box2d physics world
   box2d.step();
