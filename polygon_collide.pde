@@ -81,10 +81,10 @@ void setup() {
     // set random colors (background, blob)
     setRandomColors(1);
     
-    float gap = kinectWidth / 11;
-    for (int i=0; i<10; i++)
+    float gap = kinectWidth / 21;
+    for (int i=0; i<20; i++)
     {
-      drawString(gap * (i+1), 7.5, 10);
+      drawString(gap * (i+1), 2, 10);
     }
   }
 }
@@ -105,10 +105,10 @@ void drawString(float x, float size, int cards) {
 
     Vec2 c1 = last_shape.body.getWorldCenter();
     Vec2 c2 = next_shape.body.getWorldCenter();
-    c1.y = c1.y + 2.5;
-    c2.y = c2.y - 2.5;
+    c1.y = c1.y + 0.5;
+    c2.y = c2.y - 0.5;
     jd.initialize(last_shape.body, next_shape.body, c1, c2);
-    jd.length = box2d.scalarPixelsToWorld(gap - 15);
+    jd.length = box2d.scalarPixelsToWorld(gap - 1);
     box2d.createJoint(jd);
     polygons.add(next_shape);
     last_shape = next_shape;
