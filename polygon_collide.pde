@@ -51,7 +51,6 @@ ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
 void setup() {
   // it's possible to customize this, for example 1920x1080
   size(1280, 720, OPENGL);
-//  size(640, 480, OPENGL);
   context = new SimpleOpenNI(this);
   // initialize SimpleOpenNI object
   if (!context.enableDepth() || !context.enableUser()) { 
@@ -92,6 +91,7 @@ void setup() {
 void drawString(float x, float size, int cards) {
   
   float gap = kinectHeight/cards;
+  // anchor card
   CustomShape s1 = new CustomShape(x, -40, size, BodyType.STATIC);
   polygons.add(s1);
   
@@ -105,8 +105,9 @@ void drawString(float x, float size, int cards) {
 
     Vec2 c1 = last_shape.body.getWorldCenter();
     Vec2 c2 = next_shape.body.getWorldCenter();
-    c1.y = c1.y + 0.5;
-    c2.y = c2.y - 0.5;
+	// offset the anchors so the cards hang vertically
+    c1.y = c1.y + size / 5;
+    c2.y = c2.y - size / 5;
     jd.initialize(last_shape.body, next_shape.body, c1, c2);
     jd.length = box2d.scalarPixelsToWorld(gap - 1);
     box2d.createJoint(jd);

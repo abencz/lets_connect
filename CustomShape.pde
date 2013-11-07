@@ -34,8 +34,6 @@ class CustomShape {
     
     // box2d polygon shape
     PolygonShape sd = new PolygonShape();
-    // toxiclibs polygon creator (triangle, square, etc)
-    //toxiPoly = new Ellipse(r, 1.5*r).toPolygon2D(4);
     toxiPoly = new Polygon2D(Arrays.asList(new Vec2D(-r,r*1.5), 
                                            new Vec2D(r,r*1.5), 
                                            new Vec2D(r,-r*1.5), 
